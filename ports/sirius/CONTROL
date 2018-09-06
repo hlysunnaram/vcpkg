@@ -1,0 +1,4 @@
+Source: sirius
+Version: 0.2.0
+Description: Fast and simple to plug-in C++ resampling library that is taking advantage of the Fourier Transform
+Build-Depends: fftw3
