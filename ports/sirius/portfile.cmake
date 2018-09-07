@@ -12,20 +12,16 @@
 
 include(vcpkg_common_functions)
 
-if (EXISTS "${CURRENT_BUILDTREES_DIR}/src/.git")
-    file(REMOVE_RECURSE ${CURRENT_BUILDTREES_DIR}/src)
-endif()
-
 set(SIRIUS_VERSION 0.2.0)
-set(SIRIUS_REVISION_COMMIT 2e7c8e5f17724f43e7db4232a83f91194c909761)
-set(SIRIUS_ARCHIVE_SHA512 a16e405367c127fa3ce87ef809685dfafa3b8ba25e73898ee1fab5be16a3d6cac59f00cfe0286f0648596adb72d8f3bc08ac32835615178dba51cee089b29a1f)
+set(SIRIUS_REVISION_COMMIT ec466a3328515aa3302d811e0c27dae45f26bd0b)
+set(SIRIUS_ARCHIVE_SHA512 0d4cb35f68fa81582da61c08a66c0f3c2acfc895e76e74624a65b6c10fe8ff2a6943d1bf863d20dd30aac5b0cc96532bff57f3a1ca36518a17adc718b19a9e00)
 
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO hlysunnaram/SIRIUS
+    HEAD_REF feature/multiplatform-support
     REF ${SIRIUS_REVISION_COMMIT}
     SHA512 ${SIRIUS_ARCHIVE_SHA512}
-    HEAD_REF feature/multiplatform-support-install
 )
 
 set(USE_CXX_STATIC_RUNTIME OFF)
@@ -50,13 +46,16 @@ vcpkg_configure_cmake(
 )
 
 vcpkg_install_cmake()
+vcpkg_copy_pdbs()
+vcpkg_fixup_cmake_targets(CONFIG_PATH share/cmake)
 
 if (NOT DEFINED VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "debug")
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
+    file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)
 endif()
+
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/share/cmake-modules)
 
 file(INSTALL
     ${SOURCE_PATH}/LICENSE
     DESTINATION ${CURRENT_PACKAGES_DIR}/share/sirius RENAME copyright)
-
-vcpkg_copy_pdbs()
